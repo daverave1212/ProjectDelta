@@ -1,0 +1,237 @@
+
+
+<head>
+    <script type="module" src="src/Utils.mjs"></script>
+    <script type="module" src="src/index.mjs"></script>
+
+    <script src="codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="codemirror/theme/neat.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="page/style.css">
+    
+    <script src="codemirror/mode/waxx/waxx.js"></script>
+    <script src="codemirror/mode/javascript/javascript.js"></script>
+    <script src="codemirror/mode/python/python.js"></script>
+    <script src="codemirror/mode/haxe/haxe.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <link rel="icon" type="image/png" href="page/logo_32.png">
+
+    <meta charset="UTF-8">
+    <meta name="description" content="Waxx">
+    <meta name="keywords" content="HTML, CSS, JavaScript">
+    <meta name="author" content="Irimia Ioan-David">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Waxx</title>
+</head>
+
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bg-dark">
+
+        <a class="navbar-brand" href="#"><img src="page/logo_no_stroke_no_spacing.png"></a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link text-light dropdown-toggle" id="Dropdown-Examples-Button" href="#">
+                        Examples
+                    </a>
+                    <div id="Dropdown-Items" class="dropdown-menu" aria-labelledby="Dropdown-Examples-Button">
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="https://github.com/daverave1212/Waxx">Source Code</a>
+                </li>
+            </ul>
+
+        </div>
+
+    </nav>
+
+    <div id="Page-Prebody">
+        <div class="page-body-half no-border" id="Compile-Menu">
+            <button id="Go-Button" type="button" class="btn btn-primary">Compile me some Waxx!</button>
+            <select>
+                <option value="js">JavaScript</option>
+                <option value="py">Python</option>
+                <option value="hx">Haxe</option>
+            </select>
+        </div>
+        <div class="page-body-half no-border">
+            <button id="Run-Code-Button" type="button" class="btn btn-primary">Run this code</button>
+        </div>
+    </div>
+    <div id="Page-Body">
+        <div class="page-body-half">
+            <textarea id="In-Text-Area" rows="40" cols="80">
+
+class Fibber
+
+    o currentNumber = 1
+    o previousNumber = 1
+
+    func next(nIterations)
+        if nIterations is 0
+            return my currentNumber
+        o currentNumberBackup = my currentNumber
+        my currentNumber = my currentNumber + my previousNumber
+        print | 'At:' + my currentNumber
+        my previousNumber = currentNumberBackup
+        return my next(nIterations - 1)
+
+o fibber = new Fibber()
+
+alert | fibber.next | 4
+
+            </textarea>
+        </div>
+        <div class="page-body-half">
+            <textarea id="Out-Text-Area" rows="40" cols="80">
+Compile your code first!                
+            </textarea>
+        </div>
+    </div>
+
+    <!---------- Base Script ------------->
+    <script type="module">
+
+        import * as index from './src/index.mjs'
+
+
+        let languageSelect = document.querySelector('select')
+        let runButton = document.querySelector('#Run-Code-Button')
+        languageSelect.addEventListener('change', _ => {
+            let selectedOption = languageSelect.options[languageSelect.selectedIndex].value
+            if (selectedOption != 'js') {
+                runButton.disabled = true
+            } else {
+                runButton.disabled = false
+            }
+        })
+
+        let inCodeArea = CodeMirror.fromTextArea(document.getElementById("In-Text-Area"), {
+            lineNumbers: true,
+            mode: 'waxx',
+            theme: 'neat'
+        });
+
+        window.inCodeArea = inCodeArea
+
+        let outCodeArea = CodeMirror.fromTextArea(document.getElementById("Out-Text-Area"), {
+            lineNumbers: true,
+            mode: 'javascript',
+            theme: 'neat'
+        });
+
+        document.getElementById('Go-Button').addEventListener('click', _ => {
+            let language = languageSelect.options[languageSelect.selectedIndex].value
+            let myCode = index.go(inCodeArea.getValue(), language)
+            let languageMap = {
+                'js': 'javascript',
+                'py': 'python',
+                'hx': 'haxe'
+            }
+            outCodeArea.setOption('mode', languageMap[language])
+            outCodeArea.setValue(myCode)
+        })
+
+        document.getElementById('Run-Code-Button').addEventListener('click', _ => {
+            eval(outCodeArea.getValue())
+        })
+    </script>
+
+
+    <script>
+        let examples = {
+            'Variable Declaration (simple)': `o x = 20`,
+            'Variable Declaration (types)': `
+o name : String = 'Daisy'
+o dogs : Array{String} = ['Daisy', 'Lord', 'Ozzy']
+            `,
+            'If and Else':`
+o hasDog = true
+if hasDog is true
+    alert('Yes, I have a dog')
+else
+    alert('No :(')
+            `,
+            'Elif': `
+o x = 20
+if x is 10
+    alert('No')
+elif x is 20
+    alert('Ok')
+            `,
+            'For (language specific)': `
+o dogs = ['Daisy', 'Lord', 'Ozzy']
+
+for o dog of dogs
+    console.log("Haxe and JS " + dog)
+
+for dog in dogs
+    console.log("Python " + dog)`,
+            'Functions': `
+func sayHello(name : String)
+    alert('Hello, ' + name)
+            `,
+            'Classes' : `
+class Dog
+    o name = 'None'
+    o age : Int
+
+    func bark()
+        alert('Woof!')
+    
+    static func makeDog()
+        return new Dog()
+
+    func constructor(name)
+        my name = name`,
+        'Pipe Operator (1)': `alert | Math.sqrt | 4`,
+        'Pipe Operator (2)': `alert | Math.sqrt(Math.pow | 4, 2)`,
+        'Pipe Operator (3)': `
+func sayHello | name, country
+    alert | 'Hello! I am ' + name + ' and I am from ' + country`,
+            'Inline if': `
+o dog = 'Daisy'
+o owner = if dog is 'Daisy': 'David' else 'Someone else'`,
+            'Null Coalescing Operator': `
+o dog = null
+alert | dog?.name
+            `,
+            'Data Classes': `
+data Dog(name : String, age = 0, isMale : Boolean = false)
+            `,
+            'YAML': `
+o dog = yaml:
+    name: 'Daisy'
+    owner:
+        name: 'David'
+        age: 22
+    home: 'Romania'
+            `
+        }
+
+        for (let key of Object.keys(examples)) {
+            let a = document.createElement('a')
+            a.setAttribute('href', '#')
+            a.innerHTML = key
+            a.classList.add('dropdown-item')
+            a.addEventListener('click', function() {
+                window.inCodeArea.setValue(examples[this.innerHTML])
+                document.getElementById('Go-Button').click()
+            })
+            document.getElementById('Dropdown-Items').appendChild(a)
+        }
+    </script>
+</body>

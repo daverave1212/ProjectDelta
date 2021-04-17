@@ -1,0 +1,5 @@
+func doSomething (a : Int, b : Yes) {
+	a + b
+	do this yes
+	return 20;
+}

@@ -1,0 +1,45 @@
+
+<!doctype html>
+<head>
+    <script src="codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="codemirror/theme/neat.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="page/style.css">
+
+    <meta charset="UTF-8">
+    <meta name="description" content="Delta">
+    <meta name="keywords" content="HTML, CSS, JavaScript">
+    <meta name="author" content="Irimia Ioan-David">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="module" src="src/index.mjs">
+
+    </script>
+
+    <title>Delta</title>
+</head>
+
+<body>
+    <textarea id="Input-Code" name="name" rows="20" cols="80">
+        val numbers = mutableListOf(
+            "one",
+            "two",
+            "three",
+            "four"
+        )
+
+
+        numbers.add("five")
+    </textarea>
+    <textarea id="Output-Code" name="name" rows="20" cols="80">
+
+    </textarea>
+    <script type="module">
+        import { start } from './src/index.mjs'
+
+        let code = document.querySelector('textarea').value
+
+        document.querySelector('#Output-Code').value = start(code).toString()
+    </script>
+</body>
